@@ -1,4 +1,4 @@
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {BrowserRouter, Route, Routes, Link, useParams} from "react-router-dom";
 
 import {Button, Container, Form} from "react-bootstrap";
 
@@ -22,7 +22,7 @@ export default function App() {
                 <Route path="/" element={<Home/>}/>
                 <Route path="/auth" element={<Auth/>}/>
                 <Route path="/register" element={<Register/>}/>
-
+                <Route path="/profile/:id" element={<Profile/>}/>
             </Routes>
         </BrowserRouter>
     );
@@ -30,6 +30,36 @@ export default function App() {
 
 function Home() {
     return <h2>Home</h2>;
+}
+
+function Profile() {
+    let params = useParams();
+
+    // get User by id
+    let user =  {
+    }
+    return <Container className={"p-3"}>
+        <div className="d-flex flex-column">
+            <div className="p-2">
+                <h1>Профайл {params.id}</h1>
+            </div>
+        </div>
+    </Container>
+}
+
+function AuthAction() {
+    // get email
+    // get pass
+    // auth
+}
+
+function RegisterAction() {
+    // get user data
+    // register
+}
+
+function GetUserAction() {
+    // get User
 }
 
 function Auth() {
@@ -61,6 +91,9 @@ function Auth() {
                         </Button>
                     </Form>
                 </div>
+                <div className="p-2">
+                    нет аккаунта? <Link to={"/register"}>зарегистрируйтесь</Link>
+                </div>
             </div>
         </div>
     </Container>;
@@ -72,6 +105,9 @@ function Register() {
             <div class="d-flex flex-column">
                 <div className="p-2">
                     <h1>Регистрация</h1>
+                </div>
+                <div className="p-2">
+                    уже есть аккаунт? <Link to="/auth">войти</Link>
                 </div>
                 <div className="p-2">
                     <Form>
