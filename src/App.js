@@ -1,6 +1,8 @@
-import {BrowserRouter, Route, Routes, Link, useParams} from "react-router-dom";
+import {useNavigate ,BrowserRouter, Route, Routes, Link, useParams} from "react-router-dom";
+import { useState } from 'react';
 
 import {Button, Container, Form} from "react-bootstrap";
+import userApi from "./userApi";
 
 export default function App() {
     return (
@@ -35,9 +37,6 @@ function Home() {
 function Profile() {
     let params = useParams();
 
-    // get User by id
-    let user =  {
-    }
     return <Container className={"p-3"}>
         <div className="d-flex flex-column">
             <div className="p-2">
@@ -48,18 +47,45 @@ function Profile() {
 }
 
 function AuthAction() {
-    // get email
-    // get pass
-    // auth
+    // let d = new userApi()
+    // let email = ""
+    // let password = ""
+    //
+    // // todo получить данные
+    // // todo сделать редирект
+    // d.auth(email, password, function (data,err) {
+    //     // redirect to /
+    // })
 }
 
-function RegisterAction() {
-    // get user data
-    // register
+function RegisterAction(e) {
+    e.preventDefault();
+    let obj = {
+        "email":document.getElementById("email").value,
+        "password":document.getElementById("password").value,
+        "name":document.getElementById("name").value,
+        "surname":document.getElementById("surname").value,
+        "age":document.getElementById("age").value,
+        "male":document.getElementById("male").checked,
+        "femail":document.getElementById("female").checked,
+        "interests":document.getElementById("interests").value,
+        "city":document.getElementById("city").value
+    }
+
+    let d = new userApi();
+    d.register(email, password, name, surname, age, sex, interest, city, function(userId, err) {
+        if (err !== "") {
+            console.log(err)
+        }
+        location.href = "/profile/"+userId
+    })
 }
 
 function GetUserAction() {
-    // get User
+    // let id = 1
+    // d.getUser(id, function (user, err) {
+    //
+    // })
 }
 
 function Auth() {
@@ -86,7 +112,7 @@ function Auth() {
                         <Form.Group className="mb-3" controlId="formBasicCheckbox">
                             <Form.Check type="checkbox" label="С правилами сайта ознакомлен"/>
                         </Form.Group>
-                        <Button variant="primary" type="submit">
+                        <Button variant="primary" type="submit" onSubmit={AuthAction}>
                             Войти
                         </Button>
                     </Form>
@@ -140,23 +166,17 @@ function Register() {
                         </Form.Group>
 
                         <div className="form-check">
-                            <input className="form-check-input" type="radio" name="flexRadioDefault"
-                                   id="male" />
-                                <label className="form-check-label" htmlFor="flexRadioDefault1">
-                                    Мужской
-                                </label>
+                            <input className="form-check-input" type="radio" name="sex" id="male" />
+                            <label className="form-check-label" htmlFor="male">Мужской</label>
                         </div>
                         <div className="form-check">
-                            <input className="form-check-input" type="radio" name="flexRadioDefault"
-                                   id="female" />
-                                <label className="form-check-label" htmlFor="flexRadioDefault2">
-                                    Женский
-                                </label>
+                            <input className="form-check-input" type="radio" name="sex" id="female" />
+                            <label className="form-check-label" htmlFor="female">Женский</label>
                         </div>
 
                         <div className="mb-3">
                             <label htmlFor="exampleFormControlTextarea1" className="form-label">Интересы</label>
-                            <textarea className="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                            <textarea className="form-control" id="interests" rows="3"></textarea>
                         </div>
 
                         <Form.Group className="mb-3" controlId="city">
@@ -168,7 +188,7 @@ function Register() {
                             <Form.Check type="checkbox" label="С правилами сайта ознакомлен"/>
                         </Form.Group>
 
-                        <Button variant="primary" type="submit">
+                        <Button variant="primary" type="submit" onSubmit={RegisterAction}>
                             Зарегистрироваться
                         </Button>
                     </Form>
