@@ -32,7 +32,7 @@ export default class userApi {
         .then(function (response) {
             if (response.status == "200") {
                 this.token = response.data.token
-                callback("","")
+                callback(response.data.userId,"")
             } else if (response.status == "400") {
                 callback("", "ошибка, попробуйте позже")
             } else {

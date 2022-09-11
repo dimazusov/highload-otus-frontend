@@ -1,7 +1,7 @@
-import {useNavigate ,BrowserRouter, Route, Routes, Link, useParams} from "react-router-dom";
+import {useNavigate ,  BrowserRouter, Route, Routes, Link, useParams, Navigate} from "react-router-dom";
 import { useState } from 'react';
 
-import {Button, Container, Form} from "react-bootstrap";
+import {Col, Row,Button, Container, Form} from "react-bootstrap";
 import userApi from "./userApi";
 
 export default function App() {
@@ -36,49 +36,101 @@ function Home() {
 
 function Profile() {
     let params = useParams();
+    // const [user, setUser] = useState();
+
+    let user = {
+        "email": "utkin@yandex.ru",
+        "name": "Василий",
+        "surname": "Уткин",
+        "age": 27,
+        "sex": "Мужской",
+        "interests": "Тенис, Футбол",
+        "city": "Москва"
+    }
 
     return <Container className={"p-3"}>
-        <div className="d-flex flex-column">
-            <div className="p-2">
-                <h1>Профайл {params.id}</h1>
+        <div className="border d-flex  p-4 rounded">
+            <div className="d-flex flex-column">
+                <div className="p-2">
+                    <h1>Профайл {params.id} {user.name} {user.surname}</h1>
+                </div>
+                <Container fluid="md">
+                    <Row>
+                        <Col xs lg="2" md={"left"}>Email: </Col>
+                        <Col xs lg="2" md={"left"}>{user.email}</Col>
+                    </Row>
+                    <Row>
+                        <Col xs lg="2" md={"left"}>Имя: </Col>
+                        <Col xs lg="2" md={"left"}>{user.name}</Col>
+                    </Row>
+                    <Row>
+                        <Col xs lg="2" md={"left"}>Фамилия: </Col>
+                        <Col xs lg="2" md={"left"}>{user.surname}</Col>
+                    </Row>
+                    <Row>
+                        <Col xs lg="2" md={"left"}>Возраст: </Col>
+                        <Col xs lg="2" md={"left"}>{user.age}</Col>
+                    </Row>
+                    <Row>
+                        <Col xs lg="2" md={"left"}>Пол: </Col>
+                        <Col xs lg="2" md={"left"}>{user.sex}</Col>
+                    </Row>
+                    <Row>
+                        <Col xs lg="2" md={"left"}>Интересы: </Col>
+                        <Col xs lg="8" md={"left"}>{user.interests}</Col>
+                    </Row>
+                    <Row>
+                        <Col xs lg="2" md={"left"}>Город: </Col>
+                        <Col xs lg="2" md={"left"}>{user.city}</Col>
+                    </Row>
+                </Container>
             </div>
         </div>
     </Container>
 }
 
-function AuthAction() {
-    // let d = new userApi()
-    // let email = ""
-    // let password = ""
+function AuthAction(e, setUserId) {
+    e.preventDefault();
+    setUserId(2);
+
+    // let email = document.getElementById("email").value;
+    // let password = document.getElementById("password").value;
     //
-    // // todo получить данные
-    // // todo сделать редирект
-    // d.auth(email, password, function (data,err) {
-    //     // redirect to /
+    // let d = new userApi()
+    // d.auth(email, password, function (userId,err) {
+    //    setUserId(response.data.userId)
     // })
 }
 
-function RegisterAction(e) {
+function RegisterAction(e,setUserId) {
     e.preventDefault();
-    let obj = {
-        "email":document.getElementById("email").value,
-        "password":document.getElementById("password").value,
-        "name":document.getElementById("name").value,
-        "surname":document.getElementById("surname").value,
-        "age":document.getElementById("age").value,
-        "male":document.getElementById("male").checked,
-        "femail":document.getElementById("female").checked,
-        "interests":document.getElementById("interests").value,
-        "city":document.getElementById("city").value
-    }
+    setUserId(2)
 
-    let d = new userApi();
-    d.register(email, password, name, surname, age, sex, interest, city, function(userId, err) {
-        if (err !== "") {
-            console.log(err)
-        }
-        location.href = "/profile/"+userId
-    })
+    // let email = document.getElementById("email").value;
+    // let password = document.getElementById("password").value;
+    // let name = document.getElementById("name").value;
+    // let surname = document.getElementById("surname").value;
+    // let age = document.getElementById("age").value;
+    // let sex;
+    // if (document.getElementById("male").checked) {
+    //     // let male = document.getElementById("male").checked;
+    //     // let femail = document.getElementById("female").checked;
+    //     sex = true;
+    // } else {
+    //     sex = false;
+    // }
+    // let interests = document.getElementById("interests").value;
+    // let city = document.getElementById("city").value;
+
+    // let d = new userApi();
+    // d.register(email, password, name, surname, age, sex, interests, city, function(userId, err) {
+    //     if (err !== "") {
+    //        console.log(err)
+    //     }
+    //     setUserId(userId)
+    // })
+
+    return false;
 }
 
 function GetUserAction() {
@@ -89,6 +141,12 @@ function GetUserAction() {
 }
 
 function Auth() {
+    const [userId, setUserId] = useState(0);
+
+    if (userId !== 0) {
+        return <Navigate to={"/profile/"+userId} />
+    }
+
     return <Container className={"p-3"}>
         <div className="border d-flex align-items-center justify-content-center p-5 rounded">
             <div class="d-flex flex-column">
@@ -112,7 +170,9 @@ function Auth() {
                         <Form.Group className="mb-3" controlId="formBasicCheckbox">
                             <Form.Check type="checkbox" label="С правилами сайта ознакомлен"/>
                         </Form.Group>
-                        <Button variant="primary" type="submit" onSubmit={AuthAction}>
+                        <Button variant="primary" type="submit" onClick={(e) => {
+                            AuthAction(e, setUserId)
+                        }}>
                             Войти
                         </Button>
                     </Form>
@@ -126,6 +186,12 @@ function Auth() {
 }
 
 function Register() {
+    const [userId, setUserId] = useState(0);
+
+    if (userId !== 0) {
+        return <Navigate to={"/profile/"+userId} />
+    }
+
     return <Container className={"p-3"}>
         <div className="border d-flex align-items-center justify-content-center p-5 rounded">
             <div class="d-flex flex-column">
@@ -188,7 +254,9 @@ function Register() {
                             <Form.Check type="checkbox" label="С правилами сайта ознакомлен"/>
                         </Form.Group>
 
-                        <Button variant="primary" type="submit" onSubmit={RegisterAction}>
+                        <Button variant="primary" type="submit" onClick={(e) => {
+                            RegisterAction(e, setUserId)
+                        }}>
                             Зарегистрироваться
                         </Button>
                     </Form>
