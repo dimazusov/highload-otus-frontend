@@ -1,8 +1,9 @@
 import User from './domain/user'
+import ApiConfig from "./config";
 
 const axios = require('axios').default;
 
-const baseUrl = "http://localhost/"
+const baseUrl = ApiConfig.host+"/"+ApiConfig.port
 
 const auth = "/v1/auth"
 const reg = "/v1/registration"
