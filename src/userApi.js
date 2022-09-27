@@ -1,17 +1,17 @@
 import User from './domain/user'
-import ApiConfig from "./config";
+import config from "./config";
 
 const axios = require('axios').default;
 
-const baseUrl = ApiConfig.host+"/"+ApiConfig.port
+const baseUrl = config.scheme+"://"+config.host+":"+config.port
 
-const auth = "/v1/auth"
-const reg = "/v1/registration"
-const getUser = "/v1/user/:id"
-const getUsers = "/v1/users"
-const updateUser = "/v1/user"
-const createUser = "/v1/user"
-const deleteUser = "/v1/user/:id"
+const auth = "/api/v1/auth"
+const reg = "/api/v1/registration"
+const getUser = "/api/v1/user/:id"
+const getUsers = "/api/v1/users"
+const updateUser = "/api/v1/user"
+const createUser = "/api/v1/user"
+const deleteUser = "/api/v1/user/:id"
 
 function getFullPath(url, id) {
     if (url === getUser || url === deleteUser) {
@@ -20,12 +20,9 @@ function getFullPath(url, id) {
     return baseUrl + url
 }
 
-export default class userApi {
-    __constructor() {
-      this.token = ""
-    }
-
-    auth(email, password, callback) {
+export default {
+    auth: function(email, password, callback) {
+        console.log("test")
         axios.post(getFullPath(auth), {
             email: email,
             password: password
@@ -43,8 +40,8 @@ export default class userApi {
         .catch(function (error) {
             console.log(error);
         })
-    }
-    register(email, password, name, surname, age, sex, interest, city, callback) {
+    },
+    register: function(email, password, name, surname, age, sex, interest, city, callback) {
         axios.post(getFullPath(reg), {
             email: email,
             password: password,
@@ -66,8 +63,8 @@ export default class userApi {
         .catch(function (error) {
             console.log(error);
         })
-    }
-    getUser(userId, callback) {
+    },
+    getUser: function getUser(userId, callback) {
         axios.get(getFullPath(getUser, userId))
             .then(function (response) {
                 if (response.status == "200") {
@@ -79,8 +76,8 @@ export default class userApi {
             .catch(function (error) {
                 console.log(error);
             })
-    }
-    getUsers(user, page, perPage, callback) {
+    },
+    getUsers: function(user, page, perPage, callback) {
         let url = getFullPath(getUsers) +"?page="+page+"&per_page="+perPage
         axios.get(url)
             .then(function (response) {
@@ -103,8 +100,8 @@ export default class userApi {
             .catch(function (error) {
                 console.log(error);
             })
-    }
-    updateUser(user, callback) {
+    },
+    updateUser: function(user, callback) {
         axios.put(getFullPath(updateUser), {
             id: user.id,
             email: user.email,
@@ -126,8 +123,8 @@ export default class userApi {
             .catch(function (error) {
                 console.log(error);
             })
-    }
-    createUser(user, callback) {
+    },
+    createUser: function(user, callback) {
         axios.post(getFullPath(createUser), {
             email: user.email,
             password: user.password,
@@ -148,8 +145,8 @@ export default class userApi {
             .catch(function (error) {
                 console.log(error);
             })
-    }
-    deleteUser(user, callback) {
+    },
+    deleteUser: function(user, callback) {
         axios.delete(getFullPath(deleteUser, user.id))
             .then(function (response) {
                 if (response.status == "200") {

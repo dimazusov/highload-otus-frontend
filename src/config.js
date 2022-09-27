@@ -1,1 +1,1 @@
-var apiConfig = {"host":"PI_HOST", port:"PI_PORT"}
+export default {scheme:"http", host:"localhost", port:"8080"}

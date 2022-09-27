@@ -1,8 +1,8 @@
-import {useNavigate ,  BrowserRouter, Route, Routes, Link, useParams, Navigate} from "react-router-dom";
+import { BrowserRouter, Route, Routes, Link, useParams, Navigate} from "react-router-dom";
 import { useState } from 'react';
+import api from './userApi';
 
 import {Col, Row,Button, Container, Form} from "react-bootstrap";
-import userApi from "./userApi";
 
 export default function App() {
     return (
@@ -31,7 +31,11 @@ export default function App() {
 }
 
 function Home() {
-    return <h2>Home</h2>;
+    const [userId] = useState(0);
+    if (!userId) {
+        return <Navigate to={"/auth"} />
+    }
+    return <Navigate to={"/profile/"+userId} />
 }
 
 function Profile() {
@@ -89,17 +93,14 @@ function Profile() {
     </Container>
 }
 
-function AuthAction(e, setUserId) {
-    e.preventDefault();
-    setUserId(2);
-
-    // let email = document.getElementById("email").value;
-    // let password = document.getElementById("password").value;
-    //
-    // let d = new userApi()
-    // d.auth(email, password, function (userId,err) {
-    //    setUserId(response.data.userId)
-    // })
+function AuthAction(email, password, setUserId) {
+    api.auth(email, password, function (userId, err) {
+        if (err) {
+            console.log("error", err)
+            return
+        }
+       setUserId(userId)
+    })
 }
 
 function RegisterAction(e,setUserId) {
@@ -133,17 +134,15 @@ function RegisterAction(e,setUserId) {
     return false;
 }
 
-function GetUserAction() {
-    // let id = 1
-    // d.getUser(id, function (user, err) {
-    //
-    // })
-}
-
 function Auth() {
-    const [userId, setUserId] = useState(0);
+    const [userId, setUserId] = useState()
+    const [email, setEmail] = useState()
+    const [password, setPassword] = useState()
 
-    if (userId !== 0) {
+    const onInputEmail = ({target:{email}}) => setEmail(email);
+    const onInputPassword = ({target:{password}}) => setPassword(password);
+
+    if (userId > 0) {
         return <Navigate to={"/profile/"+userId} />
     }
 
@@ -157,12 +156,12 @@ function Auth() {
                     <Form>
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>Email адрес</Form.Label>
-                            <Form.Control type="email" placeholder="Введите email"/>
+                            <Form.Control type="email" onChange={onInputEmail} placeholder="Введите email"/>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="formBasicPassword">
                             <Form.Label>Пароль</Form.Label>
-                            <Form.Control type="password" placeholder="Введите пароль"/>
+                            <Form.Control type="password" onChange={onInputPassword} placeholder="Введите пароль"/>
                             <Form.Text className="text-muted">
                                 Пароль должен состоять не менее чем из восьми символов
                             </Form.Text>
@@ -171,10 +170,9 @@ function Auth() {
                             <Form.Check type="checkbox" label="С правилами сайта ознакомлен"/>
                         </Form.Group>
                         <Button variant="primary" type="submit" onClick={(e) => {
-                            AuthAction(e, setUserId)
-                        }}>
-                            Войти
-                        </Button>
+                            e.preventDefault()
+                            AuthAction(email, password, setUserId)
+                        }}>Войти</Button>
                     </Form>
                 </div>
                 <div className="p-2">
@@ -205,7 +203,7 @@ function Register() {
                     <Form>
                         <Form.Group className="mb-3" controlId="email">
                             <Form.Label>Email адрес</Form.Label>
-                            <Form.Control type="email" placeholder="Введите email"/>
+                            <Form.Control id="email" type="email" placeholder="Введите email"/>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="password">
