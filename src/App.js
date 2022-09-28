@@ -103,35 +103,14 @@ function AuthAction(email, password, setUserId) {
     })
 }
 
-function RegisterAction(e,setUserId) {
-    e.preventDefault();
-    setUserId(2)
-
-    // let email = document.getElementById("email").value;
-    // let password = document.getElementById("password").value;
-    // let name = document.getElementById("name").value;
-    // let surname = document.getElementById("surname").value;
-    // let age = document.getElementById("age").value;
-    // let sex;
-    // if (document.getElementById("male").checked) {
-    //     // let male = document.getElementById("male").checked;
-    //     // let femail = document.getElementById("female").checked;
-    //     sex = true;
-    // } else {
-    //     sex = false;
-    // }
-    // let interests = document.getElementById("interests").value;
-    // let city = document.getElementById("city").value;
-
-    // let d = new userApi();
-    // d.register(email, password, name, surname, age, sex, interests, city, function(userId, err) {
-    //     if (err !== "") {
-    //        console.log(err)
-    //     }
-    //     setUserId(userId)
-    // })
-
-    return false;
+function RegisterAction(email, password, name, surname, age, sex, interest, city, setUserId) {
+    api.register(email, password, name, surname, age, sex, interest, city, function(userId, err) {
+        if (err != "") {
+            console.log("error", err);
+            return
+        }
+        setUserId(userId);
+    });
 }
 
 function Auth() {
@@ -139,8 +118,8 @@ function Auth() {
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
 
-    const onInputEmail = ({target:{email}}) => setEmail(email);
-    const onInputPassword = ({target:{password}}) => setPassword(password);
+    const onInputEmail = (e) => setEmail(e.target.value);
+    const onInputPassword = (e) => setPassword(e.target.value);
 
     if (userId > 0) {
         return <Navigate to={"/profile/"+userId} />
@@ -148,7 +127,7 @@ function Auth() {
 
     return <Container className={"p-3"}>
         <div className="border d-flex align-items-center justify-content-center p-5 rounded">
-            <div class="d-flex flex-column">
+            <div className="d-flex flex-column">
                 <div className="p-2">
                     <h1>Авторизация</h1>
                 </div>
@@ -184,15 +163,33 @@ function Auth() {
 }
 
 function Register() {
-    const [userId, setUserId] = useState(0);
+    const [userId, setUserId] = useState();
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+    const [name, setName] = useState();
+    const [surname, setSurname] = useState();
+    const [age, setAge] = useState();
+    const [sex, setSex] = useState();
+    const [interest, setInterest] = useState();
+    const [city, setCity] = useState();
 
-    if (userId !== 0) {
+    const onInputEmail = (e) => setEmail(e.target.value);
+    const onInputPassword = (e) => setPassword(e.target.value);
+    const onInputName = (e) => setName(e.target.value);
+    const onInputSurname = (e) => setSurname(e.target.value);
+    const onInputAge = (e) => setAge(e.target.value);
+    const onInputSexMale = (e) => setSex("male");
+    const onInputSexFemale = (e) => setSex("female");
+    const onInputInterest = (e) => setInterest(e.target.value);
+    const onInputCity = (e) => setCity(e.target.value);
+
+    if (userId > 0) {
         return <Navigate to={"/profile/"+userId} />
     }
 
     return <Container className={"p-3"}>
         <div className="border d-flex align-items-center justify-content-center p-5 rounded">
-            <div class="d-flex flex-column">
+            <div className="d-flex flex-column">
                 <div className="p-2">
                     <h1>Регистрация</h1>
                 </div>
@@ -203,12 +200,12 @@ function Register() {
                     <Form>
                         <Form.Group className="mb-3" controlId="email">
                             <Form.Label>Email адрес</Form.Label>
-                            <Form.Control id="email" type="email" placeholder="Введите email"/>
+                            <Form.Control type="email" onChange={onInputEmail} placeholder="Введите email"/>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="password">
                             <Form.Label>Пароль</Form.Label>
-                            <Form.Control type="password" placeholder="Придумайте пароль"/>
+                            <Form.Control type="password" onChange={onInputPassword} placeholder="Придумайте пароль" />
                             <Form.Text className="text-muted">
                                 Пароль должен состоять не менее чем из восьми символов
                             </Form.Text>
@@ -216,36 +213,36 @@ function Register() {
 
                         <Form.Group className="mb-3" controlId="name">
                             <Form.Label>Имя</Form.Label>
-                            <Form.Control type="text" placeholder="Ваше имя"/>
+                            <Form.Control type="text" placeholder="Ваше имя" onChange={onInputName}/>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="surname">
                             <Form.Label>Фамилия</Form.Label>
-                            <Form.Control type="text" placeholder="Ваша фамилия"/>
+                            <Form.Control type="text" placeholder="Ваша фамилия" onChange={onInputSurname}/>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="age">
                             <Form.Label>Возраст</Form.Label>
-                            <Form.Control type="text" placeholder="Введите возраст"/>
+                            <Form.Control type="text" placeholder="Введите возраст" onChange={onInputAge}/>
                         </Form.Group>
 
                         <div className="form-check">
-                            <input className="form-check-input" type="radio" name="sex" id="male" />
+                            <input className="form-check-input" type="radio" name="sex" onChange={onInputSexMale}/>
                             <label className="form-check-label" htmlFor="male">Мужской</label>
                         </div>
                         <div className="form-check">
-                            <input className="form-check-input" type="radio" name="sex" id="female" />
+                            <input className="form-check-input" type="radio" name="sex" onChange={onInputSexFemale}/>
                             <label className="form-check-label" htmlFor="female">Женский</label>
                         </div>
 
                         <div className="mb-3">
                             <label htmlFor="exampleFormControlTextarea1" className="form-label">Интересы</label>
-                            <textarea className="form-control" id="interests" rows="3"></textarea>
+                            <textarea className="form-control" id="interests" rows="3" onChange={onInputInterest}></textarea>
                         </div>
 
                         <Form.Group className="mb-3" controlId="city">
                             <Form.Label>Город</Form.Label>
-                            <Form.Control type="text" placeholder="Ваш город"/>
+                            <Form.Control type="text" placeholder="Ваш город" onChange={onInputCity}/>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="formBasicCheckbox">
@@ -253,7 +250,8 @@ function Register() {
                         </Form.Group>
 
                         <Button variant="primary" type="submit" onClick={(e) => {
-                            RegisterAction(e, setUserId)
+                            e.preventDefault();
+                            RegisterAction(email,password,name,surname,age,sex,interest,city,setUserId)
                         }}>
                             Зарегистрироваться
                         </Button>

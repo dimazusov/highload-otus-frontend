@@ -42,13 +42,16 @@ export default {
         })
     },
     register: function(email, password, name, surname, age, sex, interest, city, callback) {
+        let iage = parseInt(age, 10)
+        let bsex = sex == "male" ? true : false;
+
         axios.post(getFullPath(reg), {
             email: email,
             password: password,
             name:name,
             surname:surname,
-            age:age,
-            sex:sex,
+            age:iage,
+            sex:bsex,
             city:city,
             interest:interest
         })
