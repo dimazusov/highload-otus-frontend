@@ -1,6 +1,6 @@
-import { BrowserRouter, Route, Routes, Link, useParams, Navigate} from "react-router-dom";
-import { useState } from 'react';
-import api from './userApi';
+import { BrowserRouter, Route, Routes, Link, Navigate} from "react-router-dom";
+import { useState,useEffect } from 'react';
+import api, {isAuth} from './userApi';
 
 import {Col, Row,Button, Container, Form} from "react-bootstrap";
 
@@ -39,53 +39,71 @@ function Home() {
 }
 
 function Profile() {
-    let params = useParams();
-    // const [user, setUser] = useState();
+    const [user, setUser] = useState();
+    let parts = document.location.href.split("/");
+    let userId = parts[parts.length-1]
 
-    let user = {
-        "email": "utkin@yandex.ru",
-        "name": "Василий",
-        "surname": "Уткин",
-        "age": 27,
-        "sex": "Мужской",
-        "interests": "Тенис, Футбол",
-        "city": "Москва"
+    useEffect(() => {
+        const fetchData = async () => {
+            api.getUser(userId, function (u, err) {
+                if (err != "") {
+                    return
+                }
+                setUser(u);
+            })
+        }
+
+        fetchData().catch(console.error);
+    }, [])
+
+    if (!isAuth()) {
+        return <Navigate to={"/auth"} />
+    }
+
+    if (user === undefined) {
+        return  <Container className={"p-3"}>
+            <div className="border d-flex  p-4 rounded">
+                <div className="d-flex flex-column">
+                    <h1>Loading</h1>
+                </div>
+            </div>
+        </Container>
     }
 
     return <Container className={"p-3"}>
         <div className="border d-flex  p-4 rounded">
             <div className="d-flex flex-column">
                 <div className="p-2">
-                    <h1>Профайл {params.id} {user.name} {user.surname}</h1>
+                    <h1>{user.name} {user.surname}</h1>
                 </div>
                 <Container fluid="md">
                     <Row>
-                        <Col xs lg="2" md={"left"}>Email: </Col>
-                        <Col xs lg="2" md={"left"}>{user.email}</Col>
+                        <Col xs lg="4" md={"left"}>Email: </Col>
+                        <Col xs lg="4" md={"left"}>{user.email}</Col>
                     </Row>
                     <Row>
-                        <Col xs lg="2" md={"left"}>Имя: </Col>
-                        <Col xs lg="2" md={"left"}>{user.name}</Col>
+                        <Col xs lg="4" md={"left"}>Имя: </Col>
+                        <Col xs lg="4" md={"left"}>{user.name}</Col>
                     </Row>
                     <Row>
-                        <Col xs lg="2" md={"left"}>Фамилия: </Col>
-                        <Col xs lg="2" md={"left"}>{user.surname}</Col>
+                        <Col xs lg="4" md={"left"}>Фамилия: </Col>
+                        <Col xs lg="4" md={"left"}>{user.surname}</Col>
                     </Row>
                     <Row>
-                        <Col xs lg="2" md={"left"}>Возраст: </Col>
-                        <Col xs lg="2" md={"left"}>{user.age}</Col>
+                        <Col xs lg="4" md={"left"}>Возраст: </Col>
+                        <Col xs lg="4" md={"left"}>{user.age}</Col>
                     </Row>
                     <Row>
-                        <Col xs lg="2" md={"left"}>Пол: </Col>
-                        <Col xs lg="2" md={"left"}>{user.sex}</Col>
+                        <Col xs lg="4" md={"left"}>Пол: </Col>
+                        <Col xs lg="4" md={"left"}>{user.sex?"Мужской":"Женский"}</Col>
                     </Row>
                     <Row>
-                        <Col xs lg="2" md={"left"}>Интересы: </Col>
-                        <Col xs lg="8" md={"left"}>{user.interests}</Col>
+                        <Col xs lg="4" md={"left"}>Интересы: </Col>
+                        <Col xs lg="8" md={"left"}>{user.interest}</Col>
                     </Row>
                     <Row>
-                        <Col xs lg="2" md={"left"}>Город: </Col>
-                        <Col xs lg="2" md={"left"}>{user.city}</Col>
+                        <Col xs lg="4" md={"left"}>Город: </Col>
+                        <Col xs lg="4" md={"left"}>{user.city}</Col>
                     </Row>
                 </Container>
             </div>

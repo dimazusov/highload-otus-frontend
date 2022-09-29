@@ -19,7 +19,11 @@ function getFullPath(url, id) {
     }
     return baseUrl + url
 }
+let token = ""
 
+export function isAuth() {
+    return token != ""? true: false;
+}
 export default {
     auth: function(email, password, callback) {
         console.log("test")
@@ -29,7 +33,7 @@ export default {
         })
         .then(function (response) {
             if (response.status == "200") {
-                this.token = response.data.token
+                token = response.data.token
                 callback(response.data.userId,"")
             } else if (response.status == "400") {
                 callback("", "ошибка, попробуйте позже")
@@ -67,10 +71,19 @@ export default {
             console.log(error);
         })
     },
-    getUser: function getUser(userId, callback) {
-        axios.get(getFullPath(getUser, userId))
+    getUser: function(userId, callback) {
+        console.log("path", getFullPath(getUser, userId))
+        console.log("this.token",token)
+
+        let config = {
+            headers: {
+                "X-Auth-Token": token,
+            }
+        }
+
+        axios.get(getFullPath(getUser, userId), config)
             .then(function (response) {
-                if (response.status == "200") {
+                if (response.status === 200) {
                     callback(response.data,"") // return user
                 } else {
                     callback(response.statusText, "ошибка, попробуйте позже")
