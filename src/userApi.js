@@ -32,10 +32,10 @@ export default {
             password: password
         })
         .then(function (response) {
-            if (response.status == "200") {
+            if (response.status === 200) {
                 token = response.data.token
                 callback(response.data.userId,"")
-            } else if (response.status == "400") {
+            } else if (response.status == 400) {
                 callback("", "ошибка, попробуйте позже")
             } else {
                 callback(response.statusText, "ошибка, попробуйте позже")
@@ -60,8 +60,8 @@ export default {
             interest:interest
         })
         .then(function (response) {
-            if (response.status == "200") {
-                this.token = response.data.token
+            if (response.status === 200) {
+                token = response.data.token
                 callback(response.data.userId, "")
             } else {
                 callback(response.statusText, "ошибка, попробуйте позже")
